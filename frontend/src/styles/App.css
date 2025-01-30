@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #3B82F6;
+  --secondary: #60A5FA;
+  --accent: #F59E0B;
+  --background: #F3F4F6;
+}
+
+body {
+  @apply bg-gray-50;
+}
+
+/* Custom classes */
+.btn-primary {
+  @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors;
+}
+
+.card {
+  @apply bg-white p-6 rounded-lg shadow-sm border border-gray-200;
+}
