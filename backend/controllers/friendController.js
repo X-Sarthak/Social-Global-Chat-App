@@ -91,3 +91,63 @@ exports.getFriends = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Friend Recommendations
+exports.getFriendRecommendations = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    // 1. Mutual Friends Recommendations
+    const mutualFriendsRecommendations = await User.aggregate([
+      {
+        $match: {
+          _id: { $ne: userId }, // Exclude self
+          friends: { $in: user.friends }, // Friends of user's friends
+          $nor: [{ _id: { $in: user.friends } }, { _id: userId }] // Exclude existing friends
+        }
+      },
+      {
+        $addFields: {
+          mutualCount: {
+            $size: { $setIntersection: ["$friends", user.friends] }
+          }
+        }
+      },
+      { $sort: { mutualCount: -1 } }, // Highest mutual friends first
+      { $limit: 10 }, // Top 10 recommendations
+      { $project: { password: 0 } } // Exclude sensitive data
+    ]);
+
+    // 2. Common Interests Recommendations (Optional)
+    const commonInterestsRecommendations = await User.aggregate([
+      {
+        $match: {
+          _id: { $ne: userId },
+          interests: { $in: user.interests || [] }, // Only if interests exist
+          $nor: [{ _id: { $in: user.friends } }, { _id: userId }]
+        }
+      },
+      {
+        $addFields: {
+          commonInterestsCount: {
+            $size: { $setIntersection: ["$interests", user.interests || []] }
+          }
+        }
+      },
+      { $sort: { commonInterestsCount: -1 } },
+      { $limit: 10 },
+      { $project: { password: 0 } }
+    ]);
+
+    // Combine & deduplicate results
+    const recommendations = [
+      ...mutualFriendsRecommendations,
+      ...commonInterestsRecommendations
+    ].filter((v, i, a) => a.findIndex(t => t._id === v._id) === i);
+
+    res.json(recommendations);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

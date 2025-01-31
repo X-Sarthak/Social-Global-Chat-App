@@ -6,6 +6,8 @@ import FriendRequest from "../components/FriendRequest";
 import FriendList from "../components/FriendList";
 import SearchUsers from "../components/SearchUsers"; // Import the new component
 import { HiUserCircle, HiPencil } from "react-icons/hi";
+import FriendRecommendations from "../components/FriendRecommendations";
+
 
 const Profile = () => {
   const [username, setUsername] = useState("");
@@ -105,8 +107,8 @@ const Profile = () => {
       {/* Add the SearchUsers component */}
       <SearchUsers />
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="card">
+      <div className="grid md:grid-cols-3 gap-6">
+      <div className="card">
           <h3 className="text-lg font-semibold mb-4">Friend Requests</h3>
           {friendRequests.map((request) => (
             <FriendRequest
@@ -120,10 +122,10 @@ const Profile = () => {
             <p className="text-gray-500">No Friends found.</p>
           )}
         </div>
-
         <div className="card">
           <FriendList friends={friends} />
         </div>
+        <FriendRecommendations />
       </div>
     </div>
   );

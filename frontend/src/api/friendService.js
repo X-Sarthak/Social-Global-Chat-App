@@ -48,12 +48,21 @@ const getFriends = async () => {
   return response.data;
 };
 
+const getRecommendations = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${API_URL}/recommendations`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
 const friendService = {
   sendFriendRequest,
   acceptFriendRequest,
   rejectFriendRequest,
   getFriendRequests,
   getFriends,
+  getRecommendations,
 };
 
 export default friendService;

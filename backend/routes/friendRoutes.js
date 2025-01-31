@@ -10,5 +10,6 @@ router.post("/accept", authMiddleware, friendController.acceptFriendRequest);
 router.post("/reject", authMiddleware, friendController.rejectFriendRequest);
 router.get("/requests", authMiddleware, friendController.getFriendRequests);
 router.get("/friends", authMiddleware, friendController.getFriends);
+router.get("/recommendations", authMiddleware, friendController.getFriendRecommendations);
 
 module.exports = router;
